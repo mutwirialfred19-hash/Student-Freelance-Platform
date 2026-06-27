@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Login — KCA Talent Hub{% endblock %}
+{% block extra_css %}
+<style>
+.auth-page { background: var(--navy-light); min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 3rem 1.5rem; }
+.auth-card { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 2.8rem; width: 100%; max-width: 440px; box-shadow: 0 4px 24px rgba(0,51,102,0.1); border-top: 4px solid var(--navy); }
+.auth-header { text-align: center; margin-bottom: 2rem; }
+.auth-logo-wrap { display: flex; align-items: center; justify-content: center; gap: 0.7rem; margin-bottom: 0.7rem; }
+.auth-logo-icon { background: var(--navy); width: 38px; height: 38px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.75rem; color: white; font-family: 'Merriweather', serif; }
+.auth-logo-text { font-family: 'Merriweather', serif; font-size: 1.1rem; font-weight: 700; color: var(--navy); }
+.auth-title { font-size: 1.4rem; font-weight: 800; color: var(--navy); margin-bottom: 0.3rem; }
+.auth-sub { color: var(--text-muted); font-size: 0.83rem; }
+.form-group { margin-bottom: 1.1rem; }
+.form-group label { display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.4rem; }
+.form-group input { width: 100%; border: 1.5px solid var(--border); border-radius: 4px; padding: 0.75rem 1rem; font-size: 0.9rem; font-family: inherit; transition: border-color 0.2s; background: var(--off-white); color: var(--text); }
+.form-group input:focus { outline: none; border-color: var(--navy); background: white; }
+.auth-submit { width: 100%; background: var(--navy); color: white; border: none; padding: 0.9rem; border-radius: 4px; font-size: 0.88rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.2s; margin-top: 0.5rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.auth-submit:hover { background: var(--orange); transform: translateY(-1px); }
+.auth-divider { text-align: center; font-size: 0.78rem; color: var(--text-muted); margin: 1.5rem 0; }
+.alt-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+.alt-btn { display: block; text-align: center; padding: 0.65rem; border: 1.5px solid var(--border); border-radius: 4px; font-size: 0.78rem; font-weight: 700; color: var(--navy); transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.04em; }
+.alt-btn:hover { border-color: var(--orange); color: var(--orange); }
+.error-msg { background: #fde8e8; color: #c0392b; border: 1px solid #f5aca6; border-left: 4px solid #c0392b; padding: 0.8rem 1rem; border-radius: 4px; font-size: 0.82rem; margin-bottom: 1.2rem; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo-wrap">
+        <div class="auth-logo-icon">KCA</div>
+        <div class="auth-logo-text">Talent Hub</div>
+      </div>
+      <div class="auth-title">Welcome Back</div>
+      <div class="auth-sub">Log in to your KCA Talent Hub account</div>
+    </div>
+    {% if messages %}{% for m in messages %}<div class="error-msg">{{ m }}</div>{% endfor %}{% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group"><label>Username</label><input name="username" type="text" placeholder="Your username" required autofocus></div>
+      <div class="form-group"><label>Password</label><input name="password" type="password" placeholder="Your password" required></div>
+      <button type="submit" class="auth-submit">Log In →</button>
+    </form>
+    <div class="auth-divider">— New to KCA Talent Hub? —</div>
+    <div class="alt-btns">
+      <a href="/accounts/register/student/" class="alt-btn">🎓 Join as Student</a>
+      <a href="/accounts/register/client/" class="alt-btn">💼 Post a Project</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

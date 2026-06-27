@@ -1,0 +1,362 @@
+{% extends 'base.html' %}
+{% block title %}KCA Talent Hub — Student Freelancing Platform{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(105deg, var(--navy-dark) 0%, var(--navy) 55%, #004d99 100%);
+  padding: 70px 5% 60px; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; right: 0; top: 0; bottom: 0; width: 45%;
+  background: linear-gradient(135deg, rgba(232,117,10,0.15) 0%, rgba(0,51,102,0) 60%);
+  clip-path: polygon(12% 0, 100% 0, 100% 100%, 0% 100%);
+}
+.hero::after {
+  content: ''; position: absolute;
+  bottom: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--orange) 0%, #ffaa44 50%, var(--orange) 100%);
+}
+.hero-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 1fr; gap: 4rem; align-items: center; position: relative; z-index: 2; }
+.hero-kca-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: rgba(232,117,10,0.15); border: 1px solid rgba(232,117,10,0.4);
+  color: #ffbb66; padding: 0.35rem 1rem; border-radius: 3px;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; margin-bottom: 1.5rem;
+}
+.hero h1 {
+  font-family: 'Merriweather', serif;
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem); font-weight: 700;
+  color: white; line-height: 1.2; margin-bottom: 1.2rem;
+}
+.hero h1 span { color: var(--orange); }
+.hero-tagline {
+  color: rgba(255,255,255,0.65); font-size: 0.95rem; line-height: 1.8;
+  margin-bottom: 2.2rem; max-width: 460px; font-weight: 300;
+}
+.hero-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+.hero-stats {
+  display: flex; gap: 2rem; padding-top: 2rem;
+  border-top: 1px solid rgba(255,255,255,0.12); flex-wrap: wrap;
+}
+.hero-stat-num { font-size: 1.7rem; font-weight: 800; color: var(--orange); line-height: 1; }
+.hero-stat-label { font-size: 0.7rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.2rem; }
+
+/* HERO VISUAL — KCA-style ID card */
+.hero-card {
+  background: white; border-radius: 8px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+  overflow: hidden; max-width: 340px; margin-left: auto;
+}
+.hero-card-header {
+  background: var(--navy); padding: 1rem 1.4rem;
+  display: flex; align-items: center; gap: 0.8rem;
+}
+.hero-card-logo { background: var(--orange); width: 32px; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.75rem; color: white; font-family: 'Merriweather', serif; flex-shrink: 0; }
+.hero-card-title { font-size: 0.78rem; font-weight: 700; color: white; }
+.hero-card-sub { font-size: 0.62rem; color: rgba(255,255,255,0.55); }
+.hero-card-body { padding: 1.4rem; }
+.profile-row { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1rem; }
+.profile-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--navy-light); border: 3px solid var(--navy); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+.profile-name { font-weight: 800; font-size: 0.95rem; color: var(--navy); }
+.profile-course { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.1rem; }
+.profile-id { font-size: 0.65rem; color: var(--orange); font-weight: 700; }
+.skill-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+.skill-chip { background: var(--navy-light); color: var(--navy); font-size: 0.65rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.05em; }
+.hero-card-footer { background: var(--off-white); padding: 0.9rem 1.4rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); }
+.rating-row { display: flex; align-items: center; gap: 0.4rem; }
+.stars-orange { color: var(--orange); font-size: 0.82rem; }
+.available-dot { display: flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; font-weight: 700; color: #28a745; }
+.available-dot::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #28a745; display: block; }
+.float-notif {
+  background: white; border-radius: 6px; padding: 0.8rem 1rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.18); margin-top: 1rem;
+  display: flex; align-items: center; gap: 0.7rem; border-left: 4px solid var(--orange);
+}
+.notif-icon { font-size: 1.2rem; flex-shrink: 0; }
+.notif-title { font-size: 0.78rem; font-weight: 700; color: var(--navy); }
+.notif-sub { font-size: 0.68rem; color: var(--text-muted); }
+
+/* ── ORANGE BAND ── */
+.orange-band {
+  background: var(--orange); padding: 1.2rem 5%;
+  display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap;
+}
+.band-stat { text-align: center; }
+.band-stat-num { font-size: 1.8rem; font-weight: 800; color: white; line-height: 1; }
+.band-stat-label { font-size: 0.7rem; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.2rem; }
+
+/* ── SECTIONS ── */
+.section { padding: 70px 5%; }
+.section-inner { max-width: 1280px; margin: 0 auto; }
+.section-label { font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--orange); font-weight: 700; margin-bottom: 0.5rem; }
+.section-title { font-family: 'Merriweather', serif; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; color: var(--navy); line-height: 1.2; margin-bottom: 0.7rem; }
+.section-sub { color: var(--text-muted); font-size: 0.9rem; max-width: 500px; line-height: 1.7; }
+.section-divider { width: 50px; height: 4px; background: var(--orange); border-radius: 2px; margin: 0.8rem 0 2.5rem; }
+
+/* ── CATEGORIES ── */
+.categories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
+.category-card {
+  background: white; border: 2px solid var(--border); border-radius: 6px;
+  padding: 1.5rem 1.2rem; text-align: center; cursor: pointer;
+  transition: all 0.22s; text-decoration: none; color: inherit; display: block;
+}
+.category-card:hover { border-color: var(--orange); transform: translateY(-4px); box-shadow: 0 10px 28px rgba(232,117,10,0.15); }
+.category-card:hover .cat-name { color: var(--navy); }
+.cat-icon { font-size: 2rem; margin-bottom: 0.7rem; display: block; }
+.cat-name { font-weight: 700; font-size: 0.82rem; color: var(--text); margin-bottom: 0.2rem; }
+.cat-count { font-size: 0.7rem; color: var(--text-muted); }
+.cat-bar { width: 28px; height: 3px; background: var(--orange); border-radius: 2px; margin: 0.6rem auto 0; opacity: 0; transition: opacity 0.2s; }
+.category-card:hover .cat-bar { opacity: 1; }
+
+/* ── HOW IT WORKS ── */
+.how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+.steps { display: flex; flex-direction: column; gap: 1.8rem; }
+.step { display: flex; gap: 1.2rem; align-items: flex-start; }
+.step-num { width: 44px; height: 44px; border-radius: 50%; background: var(--navy); color: white; font-weight: 800; font-size: 1rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 3px solid var(--orange); }
+.step-body h4 { font-weight: 700; margin-bottom: 0.3rem; font-size: 0.95rem; color: var(--navy); }
+.step-body p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.65; }
+.how-visual { background: var(--navy-light); border-radius: 8px; padding: 2rem; border: 1px solid var(--border); }
+.how-visual-title { font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--navy); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem; }
+.how-visual-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.mini-project { background: white; border-radius: 6px; padding: 1rem 1.2rem; margin-bottom: 0.8rem; border: 1px solid var(--border); border-left: 4px solid var(--navy); transition: border-left-color 0.2s; }
+.mini-project:hover { border-left-color: var(--orange); }
+.mini-project-title { font-weight: 700; font-size: 0.85rem; color: var(--navy); margin-bottom: 0.4rem; }
+.mini-project-meta { display: flex; justify-content: space-between; align-items: center; }
+.mini-budget { font-size: 0.78rem; font-weight: 700; color: var(--orange); }
+.mini-badge { font-size: 0.62rem; background: var(--navy-light); color: var(--navy); padding: 0.2rem 0.55rem; border-radius: 3px; font-weight: 700; text-transform: uppercase; }
+
+/* ── PROJECTS ── */
+.projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 1.2rem; }
+.project-card {
+  background: white; border: 1.5px solid var(--border); border-radius: 6px;
+  padding: 1.5rem; transition: all 0.22s; display: block; color: inherit;
+  border-top: 4px solid var(--navy);
+}
+.project-card:hover { border-top-color: var(--orange); box-shadow: 0 8px 28px rgba(0,51,102,0.1); transform: translateY(-3px); }
+.project-cat { display: inline-flex; align-items: center; gap: 0.35rem; background: var(--navy-light); color: var(--navy); font-size: 0.7rem; font-weight: 700; padding: 0.25rem 0.7rem; border-radius: 3px; margin-bottom: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.project-title { font-weight: 700; font-size: 0.98rem; margin-bottom: 0.5rem; line-height: 1.4; color: var(--navy); }
+.project-desc { font-size: 0.81rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem; }
+.skill-tag { display: inline-block; background: var(--orange-light); color: var(--orange-dark); font-size: 0.67rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 3px; margin: 0.15rem 0.1rem; }
+.project-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.9rem; margin-top: 0.8rem; }
+.project-budget { font-weight: 800; font-size: 0.9rem; color: var(--orange); }
+.project-meta-txt { font-size: 0.72rem; color: var(--text-muted); text-align: right; }
+
+/* ── TRUST ── */
+.trust-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
+.trust-item { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 2rem 1.5rem; text-align: center; border-bottom: 4px solid var(--orange); }
+.trust-icon { font-size: 2.2rem; margin-bottom: 1rem; }
+.trust-title { font-weight: 700; font-size: 0.92rem; color: var(--navy); margin-bottom: 0.5rem; }
+.trust-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; }
+
+/* ── CTA ── */
+.cta-band { background: var(--navy); padding: 70px 5%; text-align: center; position: relative; overflow: hidden; }
+.cta-band::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--orange); }
+.cta-band h2 { font-family: 'Merriweather', serif; font-size: clamp(1.6rem, 3.5vw, 2.6rem); font-weight: 700; color: white; margin-bottom: 0.8rem; }
+.cta-band p { color: rgba(255,255,255,0.65); font-size: 0.95rem; margin-bottom: 2rem; }
+.cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+@media (max-width: 768px) {
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-card { display: none; }
+  .how-grid { grid-template-columns: 1fr; }
+  .orange-band { gap: 2rem; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-kca-badge">🎓 KCA University Official Platform</div>
+      <h1>Student Talent.<br><span>Real Clients.</span><br>Real Income.</h1>
+      <p class="hero-tagline">Kenya's first university-verified freelancing platform. KCA students earn from their skills — tech, creative, beauty, hospitality and more — while still in campus.</p>
+      <div class="hero-actions">
+        <a href="/accounts/register/student/" class="btn btn-primary btn-lg">Join as Student</a>
+        <a href="/accounts/register/client/" class="btn btn-outline btn-lg">Post a Project</a>
+      </div>
+      <div class="hero-stats">
+        <div><div class="hero-stat-num">{{ student_count }}+</div><div class="hero-stat-label">Students</div></div>
+        <div><div class="hero-stat-num">{{ project_count }}+</div><div class="hero-stat-label">Projects</div></div>
+        <div><div class="hero-stat-num">16+</div><div class="hero-stat-label">Categories</div></div>
+        <div><div class="hero-stat-num">KSh</div><div class="hero-stat-label">Earn While Studying</div></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="hero-card">
+        <div class="hero-card-header">
+          <div class="hero-card-logo">KCA</div>
+          <div><div class="hero-card-title">KCA Talent Hub</div><div class="hero-card-sub">Verified Student Profile</div></div>
+        </div>
+        <div class="hero-card-body">
+          <div class="profile-row">
+            <div class="profile-avatar">👩‍💻</div>
+            <div>
+              <div class="profile-name">Jane Wanjiku</div>
+              <div class="profile-course">BSc. Computer Science · Year 3</div>
+              <div class="profile-id">2110445@students.kcau.ac.ke</div>
+            </div>
+          </div>
+          <div class="skill-chips">
+            <span class="skill-chip">Web Dev</span>
+            <span class="skill-chip">Django</span>
+            <span class="skill-chip">React</span>
+            <span class="skill-chip">UI/UX</span>
+          </div>
+        </div>
+        <div class="hero-card-footer">
+          <div class="rating-row"><span class="stars-orange">★★★★★</span><span style="font-size:0.75rem;font-weight:700;color:var(--navy)">5.0</span></div>
+          <div class="available-dot">Available Now</div>
+        </div>
+      </div>
+      <div class="float-notif">
+        <div class="notif-icon">💰</div>
+        <div><div class="notif-title">New Project Match!</div><div class="notif-sub">Build E-commerce site · KSh 15,000</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAND -->
+<div class="orange-band">
+  <div class="band-stat"><div class="band-stat-num">{{ student_count }}+</div><div class="band-stat-label">Registered Students</div></div>
+  <div class="band-stat"><div class="band-stat-num">{{ project_count }}+</div><div class="band-stat-label">Projects Posted</div></div>
+  <div class="band-stat"><div class="band-stat-num">16+</div><div class="band-stat-label">Service Categories</div></div>
+  <div class="band-stat"><div class="band-stat-num">100%</div><div class="band-stat-label">Verified Students</div></div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="section" id="categories" style="background:white;">
+<div class="section-inner">
+  <p class="section-label">What Students Offer</p>
+  <h2 class="section-title">Browse by Category</h2>
+  <div class="section-divider"></div>
+  <div class="categories-grid">
+    {% for cat in categories %}
+    <a href="/projects/?category={{ cat.slug }}" class="category-card">
+      <span class="cat-icon">{{ cat.icon }}</span>
+      <div class="cat-name">{{ cat.name }}</div>
+      <div class="cat-count">{{ cat.projects.count }} project{{ cat.projects.count|pluralize }}</div>
+      <div class="cat-bar"></div>
+    </a>
+    {% empty %}
+    <a href="/projects/" class="category-card"><span class="cat-icon">💻</span><div class="cat-name">Web Development</div><div class="cat-count">Open</div><div class="cat-bar"></div></a>
+    <a href="/projects/" class="category-card"><span class="cat-icon">🎨</span><div class="cat-name">Graphic Design</div><div class="cat-count">Open</div><div class="cat-bar"></div></a>
+    <a href="/projects/" class="category-card"><span class="cat-icon">✍️</span><div class="cat-name">Content Writing</div><div class="cat-count">Open</div><div class="cat-bar"></div></a>
+    <a href="/projects/" class="category-card"><span class="cat-icon">📱</span><div class="cat-name">Digital Marketing</div><div class="cat-count">Open</div><div class="cat-bar"></div></a>
+    <a href="/projects/" class="category-card"><span class="cat-icon">📚</span><div class="cat-name">Tutoring</div><div class="cat-count">Open</div><div class="cat-bar"></div></a>
+    <a href="/projects/" class="category-card"><span class="cat-icon">💇‍♀️</span><div class="cat-name">Hairdressing</div><div class="cat-count">Open</div><div class="cat-bar"></div></a>
+    <a href="/projects/" class="category-card"><span class="cat-icon">💅</span><div class="cat-name">Nail Art</div><div class="cat-count">Open</div><div class="cat-bar"></div></a>
+    <a href="/projects/" class="category-card"><span class="cat-icon">💆‍♀️</span><div class="cat-name">Massage Therapy</div><div class="cat-count">Open</div><div class="cat-bar"></div></a>
+    <a href="/projects/" class="category-card"><span class="cat-icon">🍽️</span><div class="cat-name">Hospitality</div><div class="cat-count">Open</div><div class="cat-bar"></div></a>
+    <a href="/projects/" class="category-card"><span class="cat-icon">📸</span><div class="cat-name">Photography</div><div class="cat-count">Open</div><div class="cat-bar"></div></a>
+    <a href="/projects/" class="category-card"><span class="cat-icon">🎬</span><div class="cat-name">Video Editing</div><div class="cat-count">Open</div><div class="cat-bar"></div></a>
+    <a href="/projects/" class="category-card"><span class="cat-icon">🎵</span><div class="cat-name">Music & Audio</div><div class="cat-count">Open</div><div class="cat-bar"></div></a>
+    <a href="/projects/" class="category-card"><span class="cat-icon">🧮</span><div class="cat-name">Data & Excel</div><div class="cat-count">Open</div><div class="cat-bar"></div></a>
+    <a href="/projects/" class="category-card"><span class="cat-icon">👗</span><div class="cat-name">Fashion & Styling</div><div class="cat-count">Open</div><div class="cat-bar"></div></a>
+    <a href="/projects/" class="category-card"><span class="cat-icon">🍰</span><div class="cat-name">Baking & Catering</div><div class="cat-count">Open</div><div class="cat-bar"></div></a>
+    <a href="/projects/" class="category-card"><span class="cat-icon">🌿</span><div class="cat-name">Wellness & Fitness</div><div class="cat-count">Open</div><div class="cat-bar"></div></a>
+    {% endfor %}
+  </div>
+</div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="section" id="how" style="background:var(--off-white);">
+<div class="section-inner">
+  <div class="how-grid">
+    <div>
+      <p class="section-label">Simple Process</p>
+      <h2 class="section-title">How It Works</h2>
+      <div class="section-divider"></div>
+      <p style="color:var(--text-muted);font-size:0.88rem;margin-bottom:2rem;line-height:1.7">Getting started takes less than 5 minutes. Students use their official KCA email for instant verification.</p>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Register with your KCA email</h4><p>Use your official KCA University student email (studentnumber@students.kcau.ac.ke) to verify and join the platform instantly.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Build your profile & list your skills</h4><p>Add your skills, portfolio, hourly rate and bio. The more detail you add, the more likely clients are to hire you.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Apply to projects or get discovered</h4><p>Browse open projects and submit proposals, or let clients find you through the talent directory.</p></div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Deliver, earn & build your reputation</h4><p>Complete quality work, collect payment, and earn reviews that build your freelancing reputation on campus.</p></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="how-visual">
+        <div class="how-visual-title">Live on Platform</div>
+        <div class="mini-project"><div class="mini-project-title">📱 Design social media kit for SME</div><div class="mini-project-meta"><span class="mini-budget">KSh 3,500</span><span class="mini-badge">3 proposals</span></div></div>
+        <div class="mini-project"><div class="mini-project-title">💇‍♀️ Hair styling for bridal party (4 pax)</div><div class="mini-project-meta"><span class="mini-budget">KSh 9,000</span><span class="mini-badge">1 proposal</span></div></div>
+        <div class="mini-project"><div class="mini-project-title">📚 Mathematics tutoring — KCSE</div><div class="mini-project-meta"><span class="mini-budget">KSh 1,500/hr</span><span class="mini-badge">5 proposals</span></div></div>
+        <div class="mini-project"><div class="mini-project-title">💻 Build Django REST API backend</div><div class="mini-project-meta"><span class="mini-budget">KSh 20,000</span><span class="mini-badge">2 proposals</span></div></div>
+        <div class="mini-project"><div class="mini-project-title">💅 Gel nails + nail art (home visit)</div><div class="mini-project-meta"><span class="mini-budget">KSh 2,200</span><span class="mini-badge">New</span></div></div>
+      </div>
+      <div style="margin-top:1rem;text-align:center">
+        <a href="/projects/" class="btn btn-outline-navy btn-sm">View All Open Projects →</a>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- RECENT PROJECTS -->
+{% if recent_projects %}
+<div class="section" style="background:white;">
+<div class="section-inner">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem;margin-bottom:0">
+    <div>
+      <p class="section-label">Live Opportunities</p>
+      <h2 class="section-title">Latest Projects</h2>
+      <div class="section-divider"></div>
+    </div>
+    <a href="/projects/" class="btn btn-outline-navy btn-sm" style="margin-bottom:2.5rem">View All Projects →</a>
+  </div>
+  <div class="projects-grid">
+    {% for project in recent_projects %}
+    <a href="/projects/{{ project.pk }}/" class="project-card">
+      <div class="project-cat">{% if project.category %}{{ project.category.icon }} {{ project.category.name }}{% else %}💼 General{% endif %}</div>
+      <div class="project-title">{{ project.title }}</div>
+      <div class="project-desc">{{ project.description|truncatewords:18 }}</div>
+      {% for skill in project.skills_list %}<span class="skill-tag">{{ skill }}</span>{% endfor %}
+      <div class="project-footer">
+        <div class="project-budget">{% if project.budget_min %}KSh {{ project.budget_min|floatformat:0 }}{% if project.budget_max %} – {{ project.budget_max|floatformat:0 }}{% endif %}{% else %}Negotiable{% endif %}</div>
+        <div class="project-meta-txt">{{ project.proposal_count }} proposal{{ project.proposal_count|pluralize }}<br><span style="color:var(--text-light)">{{ project.created_at|timesince }} ago</span></div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+</div>
+{% endif %}
+
+<!-- WHY TRUST US -->
+<div class="section" style="background:var(--navy-light);">
+<div class="section-inner">
+  <div style="text-align:center;margin-bottom:2.5rem">
+    <p class="section-label">Why KCA Talent Hub</p>
+    <h2 class="section-title" style="text-align:center">Built for the KCA Community</h2>
+    <div class="section-divider" style="margin:0.8rem auto 0"></div>
+  </div>
+  <div class="trust-grid">
+    <div class="trust-item"><div class="trust-icon">🔐</div><div class="trust-title">KCA-Verified Students Only</div><div class="trust-desc">Every student account is verified against the official KCA University email domain. You always know who you're hiring.</div></div>
+    <div class="trust-item"><div class="trust-icon">🌍</div><div class="trust-title">All Skills Welcome</div><div class="trust-desc">Tech, creative, beauty, hospitality, wellness — every talent has a market. If you can do it, someone will pay for it.</div></div>
+    <div class="trust-item"><div class="trust-icon">⭐</div><div class="trust-title">Transparent Reviews</div><div class="trust-desc">Star ratings and reviews after every job build a reliable reputation system that rewards quality work.</div></div>
+    <div class="trust-item"><div class="trust-icon">💰</div><div class="trust-title">Earn While You Study</div><div class="trust-desc">Real income, real experience, real portfolio — all without leaving Nairobi or interrupting your studies.</div></div>
+  </div>
+</div>
+</div>
+
+<!-- CTA -->
+<div class="cta-band">
+  <h2>Ready to Start Earning<br>from Your Skills?</h2>
+  <p>Join the KCA Talent Hub community and turn your education into income</p>
+  <div class="cta-actions">
+    <a href="/accounts/register/student/" class="btn btn-primary btn-lg">Join as Student — Free</a>
+    <a href="/accounts/register/client/" class="btn btn-outline btn-lg">Post a Project</a>
+  </div>
+  <p style="font-size:0.75rem;color:rgba(255,255,255,0.35);margin-top:1.5rem;font-style:italic">"Advancing Knowledge, Driving Change" — KCA University</p>
+</div>
+
+{% endblock %}

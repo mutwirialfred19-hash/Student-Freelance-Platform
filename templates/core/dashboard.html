@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — KCA Talent Hub{% endblock %}
+{% block extra_css %}
+<style>
+.dash-hero { background: var(--navy); padding: 2rem 5%; border-bottom: 4px solid var(--orange); }
+.dash-hero-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+.dash-greeting { color: white; }
+.dash-greeting h1 { font-family: 'Merriweather', serif; font-size: 1.6rem; font-weight: 700; margin-bottom: 0.2rem; }
+.dash-greeting p { font-size: 0.82rem; color: rgba(255,255,255,0.6); }
+.dash-wrap { max-width: 1100px; margin: 0 auto; padding: 2rem 5%; }
+.stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.stat-card { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 1.4rem 1.5rem; border-top: 4px solid var(--navy); }
+.stat-card-num { font-size: 1.9rem; font-weight: 800; color: var(--orange); line-height: 1; }
+.stat-card-label { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.content-card { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 1.8rem; margin-bottom: 1.2rem; }
+.content-card h3 { font-weight: 700; font-size: 0.95rem; color: var(--navy); margin-bottom: 1.2rem; padding-bottom: 0.7rem; border-bottom: 2px solid var(--orange); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.table-row { display: flex; justify-content: space-between; align-items: center; padding: 0.9rem 0; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 0.5rem; }
+.table-row:last-child { border-bottom: none; }
+.row-title { font-weight: 700; font-size: 0.88rem; color: var(--navy); }
+.row-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.15rem; }
+.status-badge { font-size: 0.65rem; font-weight: 700; padding: 0.25rem 0.7rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.08em; }
+.status-pending { background: #fff3cd; color: #856404; }
+.status-accepted { background: #d4edda; color: #155724; }
+.status-rejected { background: #f8d7da; color: #721c24; }
+.status-open { background: var(--navy-light); color: var(--navy); }
+.status-in_progress { background: #fff3cd; color: #856404; }
+.empty-state { text-align: center; padding: 2.5rem; color: var(--text-muted); }
+.empty-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
+.profile-alert { background: var(--orange-light); border: 1px solid #ffc07a; border-left: 4px solid var(--orange); border-radius: 4px; padding: 1rem 1.4rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.profile-alert p { font-size: 0.85rem; color: var(--orange-dark); font-weight: 600; }
+.profile-alert span { font-size: 0.78rem; color: var(--text-muted); display: block; margin-top: 0.2rem; font-weight: 400; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="dash-hero">
+  <div class="dash-hero-inner">
+    <div class="dash-greeting">
+      <h1>Welcome, {{ user.first_name }} 👋</h1>
+      <p>{{ user.get_role_display }} Account &nbsp;·&nbsp; KCA Talent Hub &nbsp;·&nbsp; {{ user.email }}</p>
+    </div>
+    {% if user.role == 'client' %}
+      <a href="/projects/post/" class="btn btn-primary">+ Post a Project</a>
+    {% else %}
+      <a href="/projects/" class="btn btn-primary">Browse Projects →</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="dash-wrap">
+  {% if user.role == 'student' %}
+    {% if not profile.skills and not profile.bio %}
+    <div class="profile-alert">
+      <div><p>Complete your profile to get hired faster</p><span>Add your skills, bio and portfolio so clients can discover you</span></div>
+      <a href="/admin/" class="btn btn-primary btn-sm">Update Profile</a>
+    </div>
+    {% endif %}
+    <div class="stat-cards">
+      <div class="stat-card"><div class="stat-card-num">{{ proposals.count }}</div><div class="stat-card-label">Proposals Sent</div></div>
+      <div class="stat-card"><div class="stat-card-num">{{ profile.jobs_completed }}</div><div class="stat-card-label">Jobs Completed</div></div>
+      <div class="stat-card"><div class="stat-card-num">KSh {{ profile.total_earned|floatformat:0 }}</div><div class="stat-card-label">Total Earned</div></div>
+      <div class="stat-card"><div class="stat-card-num">{% if profile.avg_rating %}{{ profile.avg_rating }}★{% else %}—{% endif %}</div><div class="stat-card-label">Avg Rating</div></div>
+    </div>
+    <div class="content-card">
+      <h3>📋 My Proposals</h3>
+      {% for proposal in proposals %}
+      <div class="table-row">
+        <div>
+          <div class="row-title">{{ proposal.project.title }}</div>
+          <div class="row-sub">KSh {{ proposal.proposed_price|floatformat:0 }} &nbsp;·&nbsp; {{ proposal.submitted_at|date:"d M Y" }}</div>
+        </div>
+        <span class="status-badge status-{{ proposal.status }}">{{ proposal.get_status_display }}</span>
+      </div>
+      {% empty %}
+      <div class="empty-state"><div class="empty-icon">📬</div><p>No proposals yet. <a href="/projects/" style="color:var(--navy);font-weight:700">Browse open projects →</a></p></div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="stat-cards">
+      <div class="stat-card"><div class="stat-card-num">{{ projects.count }}</div><div class="stat-card-label">Projects Posted</div></div>
+    </div>
+    <div class="content-card">
+      <h3>📂 My Projects</h3>
+      {% for project in projects %}
+      <div class="table-row">
+        <div>
+          <div class="row-title"><a href="/projects/{{ project.pk }}/" style="color:var(--navy)">{{ project.title }}</a></div>
+          <div class="row-sub">{{ project.proposal_count }} proposal{{ project.proposal_count|pluralize }} &nbsp;·&nbsp; {{ project.created_at|date:"d M Y" }}</div>
+        </div>
+        <span class="status-badge status-{{ project.status }}">{{ project.get_status_display }}</span>
+      </div>
+      {% empty %}
+      <div class="empty-state"><div class="empty-icon">📌</div><p>No projects yet. <a href="/projects/post/" style="color:var(--navy);font-weight:700">Post your first project →</a></p></div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

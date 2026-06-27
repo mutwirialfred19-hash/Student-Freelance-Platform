@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}Browse Projects — KCA Talent Hub{% endblock %}
+{% block extra_css %}
+<style>
+.page-hero { background: var(--navy); padding: 2.5rem 5%; border-bottom: 4px solid var(--orange); }
+.page-hero-inner { max-width: 1200px; margin: 0 auto; }
+.page-hero h1 { font-family: 'Merriweather', serif; font-size: 1.8rem; font-weight: 700; color: white; margin-bottom: 0.3rem; }
+.page-hero p { color: rgba(255,255,255,0.6); font-size: 0.85rem; }
+.page-wrap { max-width: 1200px; margin: 0 auto; padding: 2rem 5%; }
+.filters-bar { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 1.2rem 1.5rem; margin-bottom: 1.5rem; display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: center; }
+.search-wrap { display: flex; gap: 0.5rem; flex: 1; min-width: 220px; }
+.search-wrap input { flex: 1; border: 1.5px solid var(--border); border-radius: 4px; padding: 0.6rem 1rem; font-size: 0.85rem; font-family: inherit; }
+.search-wrap input:focus { outline: none; border-color: var(--navy); }
+.cat-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.cat-pill { padding: 0.4rem 1rem; border-radius: 3px; border: 1.5px solid var(--border); background: white; font-size: 0.75rem; font-weight: 700; cursor: pointer; font-family: inherit; color: var(--text-muted); text-decoration: none; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.05em; }
+.cat-pill:hover { border-color: var(--navy); color: var(--navy); }
+.cat-pill.active { background: var(--navy); border-color: var(--navy); color: white; }
+.projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 1.2rem; }
+.project-card { background: white; border: 1.5px solid var(--border); border-radius: 6px; padding: 1.5rem; transition: all 0.22s; display: block; color: inherit; border-top: 4px solid var(--navy); }
+.project-card:hover { border-top-color: var(--orange); box-shadow: 0 8px 28px rgba(0,51,102,0.1); transform: translateY(-3px); }
+.project-cat { display: inline-flex; align-items: center; gap: 0.35rem; background: var(--navy-light); color: var(--navy); font-size: 0.68rem; font-weight: 700; padding: 0.25rem 0.7rem; border-radius: 3px; margin-bottom: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.project-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem; line-height: 1.4; color: var(--navy); }
+.project-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem; }
+.skill-tag { display: inline-block; background: var(--orange-light); color: var(--orange-dark); font-size: 0.65rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 3px; margin: 0.15rem 0.1rem; }
+.project-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.9rem; margin-top: 0.8rem; }
+.project-budget { font-weight: 800; font-size: 0.9rem; color: var(--orange); }
+.project-meta-txt { font-size: 0.72rem; color: var(--text-muted); text-align: right; }
+.empty { text-align: center; padding: 4rem; color: var(--text-muted); grid-column: 1/-1; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <h1>Browse Projects</h1>
+    <p>Find your next opportunity — {{ projects.count }} open project{{ projects.count|pluralize }} available</p>
+  </div>
+</div>
+<div class="page-wrap">
+  <div class="filters-bar">
+    <form method="get" style="display:flex;gap:0.5rem;flex:1;min-width:220px">
+      <input name="q" value="{{ search }}" placeholder="Search projects by title or description..." style="flex:1;border:1.5px solid var(--border);border-radius:4px;padding:0.6rem 1rem;font-size:0.85rem;font-family:inherit">
+      <button type="submit" class="btn btn-navy btn-sm">Search</button>
+    </form>
+    {% if request.user.is_authenticated and request.user.role == 'client' %}
+    <a href="/projects/post/" class="btn btn-primary btn-sm">+ Post Project</a>
+    {% endif %}
+  </div>
+  <div class="cat-pills">
+    <a href="/projects/" class="cat-pill {% if not cat_slug %}active{% endif %}">All</a>
+    {% for cat in categories %}<a href="/projects/?category={{ cat.slug }}" class="cat-pill {% if cat_slug == cat.slug %}active{% endif %}">{{ cat.icon }} {{ cat.name }}</a>{% endfor %}
+  </div>
+  <div class="projects-grid">
+    {% for project in projects %}
+    <a href="/projects/{{ project.pk }}/" class="project-card">
+      <div class="project-cat">{% if project.category %}{{ project.category.icon }} {{ project.category.name }}{% else %}💼 General{% endif %}</div>
+      <div class="project-title">{{ project.title }}</div>
+      <div class="project-desc">{{ project.description|truncatewords:20 }}</div>
+      {% for skill in project.skills_list %}<span class="skill-tag">{{ skill }}</span>{% endfor %}
+      <div class="project-footer">
+        <div class="project-budget">{% if project.budget_min %}KSh {{ project.budget_min|floatformat:0 }}{% if project.budget_max %} – {{ project.budget_max|floatformat:0 }}{% endif %}{% else %}Negotiable{% endif %}</div>
+        <div class="project-meta-txt">{{ project.proposal_count }} proposal{{ project.proposal_count|pluralize }}<br>{{ project.created_at|timesince }} ago</div>
+      </div>
+    </a>
+    {% empty %}
+    <div class="empty"><p style="font-size:2.5rem;margin-bottom:0.8rem">🔍</p><p style="font-weight:700;color:var(--navy);margin-bottom:0.5rem">No projects found</p><p>{% if request.user.is_authenticated and request.user.role == 'client' %}<a href="/projects/post/" style="color:var(--orange);font-weight:700">Post the first project →</a>{% else %}Check back soon or <a href="/" style="color:var(--navy);font-weight:700">go home</a>{% endif %}</p></div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
